@@ -1,7 +1,9 @@
 package users
 
 import (
+	"encoding/json"
 	"log"
+	"net/http"
 
 	"github.com/go-pg/pg/v10"
 )
@@ -24,11 +26,15 @@ func (u *User) InsertUser(conn *pg.DB) {
 	}
 }
 
-func GetUsers(conn *pg.DB) []User {
+func GetUsers(conn *pg.DB, w http.ResponseWriter, r *http.Request) {
 	var users []User
-	selectErr := conn.Model(&users).Select()
+	selectErr := conn.Model(&users).Limit(10).Select()
 	if selectErr != nil {
 		log.Printf("Error selecting users: %v", selectErr)
 	}
-	return users
+	usersJson, err := json.Marshal(users)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	w.Write(usersJson)
 }

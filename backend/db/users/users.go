@@ -1,40 +1,36 @@
 package users
 
 import (
-	"encoding/json"
 	"log"
-	"net/http"
 
 	"github.com/go-pg/pg/v10"
 )
 
 type User struct {
-	UserId   int64  `sql:"user_id,pk",json:"user_id"`
-	Username string `sql:"username",json:"user_name`
-	Email    string `sql:"email",json:"email`
-	Password string `sql:"password",json:"password`
+	UserId   int64  `sql:"user_id,pk" json:"user_id"`
+	Username string `sql:"username" json:"user_name"`
+	Email    string `sql:"email" json:"email"`
+	Password string `sql:"password" json:"password"`
 }
 
 func NewUser() *User {
 	return &User{Username: "username3", Email: "email3", Password: "password"}
 }
 
-func (u *User) InsertUser(conn *pg.DB) {
-	_, insertErr := conn.Model(u).Insert()
+func (u *User) InsertUser(db *pg.DB) error {
+	_, insertErr := db.Model(u).Insert()
 	if insertErr != nil {
 		log.Printf("Error inserting user: %v", insertErr)
+		return insertErr
 	}
+	return nil
 }
 
-func GetUsers(conn *pg.DB, w http.ResponseWriter, r *http.Request) {
+func GetUsers(db *pg.DB) []User {
 	var users []User
-	selectErr := conn.Model(&users).Limit(10).Select()
+	selectErr := db.Model(&users).Limit(10).Select()
 	if selectErr != nil {
 		log.Printf("Error selecting users: %v", selectErr)
 	}
-	usersJson, err := json.Marshal(users)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-	w.Write(usersJson)
+	return users
 }

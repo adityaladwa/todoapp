@@ -28,7 +28,7 @@ func (app *App) handleRequest(handler func(db *pg.DB, w http.ResponseWriter, r *
 
 func (app *App) setupRoutes() {
 	log.Printf("Setting up routes")
-	http.HandleFunc("/users", app.handleRequest(server.GetUsers))
+	http.HandleFunc("/users", app.handleRequest(server.UsersEndpoint))
 	log.Printf("Server is listening on 8080")
 	http.ListenAndServe(":8080", nil)
 }

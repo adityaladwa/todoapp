@@ -1,10 +1,14 @@
 package db
 
-import "github.com/go-pg/pg/v10"
+import (
+	"github.com/adityaladwa/todoapp/db"
+	"github.com/go-pg/pg/v10"
+)
 
 func Connect() *pg.DB {
+	DbCofig := db.GetDbConfig()
 	return pg.Connect(&pg.Options{
-		User:     "adityaladwa",
-		Database: "todoapp",
+		User:     DbCofig.Username,
+		Database: DbCofig.DbName,
 	})
 }

@@ -1,12 +1,14 @@
 package server
 
-import "net/http"
+import (
+	"log"
+	"net/http"
 
-func CreateServer() {
-	http.HandleFunc("/", getTodos)
-	http.ListenAndServe(":8080", nil)
-}
+	"github.com/adityaladwa/todoapp/db/users"
+	"github.com/go-pg/pg/v10"
+)
 
-func getTodos(w http.ResponseWriter, r *http.Request) {
-
+func GetUsers(db *pg.DB, w http.ResponseWriter, r *http.Request) {
+	log.Print("Got a request")
+	users.GetUsers(db, w, r)
 }

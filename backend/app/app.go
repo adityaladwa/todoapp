@@ -17,8 +17,8 @@ func Init() error {
 func setupRoutes() {
 	log.Printf("Setting up routes")
 	s := fiber.New()
-	s.Get("/users", server.GetUsers)
-	s.Post("/users", server.AddUser)
+	s.Get("api/v1/users", server.GetUsers)
+	s.Post("api/v1/users", server.AddUser)
 	log.Printf("Server is listening on 8080")
 	s.Listen(":8080")
 }

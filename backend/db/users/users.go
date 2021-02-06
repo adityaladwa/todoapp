@@ -3,7 +3,7 @@ package users
 import (
 	"log"
 
-	"github.com/go-pg/pg/v10"
+	db "github.com/adityaladwa/todoapp/db/connect"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,9 +19,9 @@ func NewUser(username string, email string, password string) *User {
 	return &User{Username: username, Email: email, Password: string(hash)}
 }
 
-func (u *User) InsertUser(db *pg.DB) error {
+func (u *User) InsertUser() error {
 	u.Password = string(GetPasswordHash(u.Password))
-	_, insertErr := db.Model(u).Insert()
+	_, insertErr := db.DBConn.Model(u).Insert()
 	if insertErr != nil {
 		log.Printf("Error inserting user: %v", insertErr)
 		return insertErr
@@ -29,9 +29,9 @@ func (u *User) InsertUser(db *pg.DB) error {
 	return nil
 }
 
-func GetUsers(db *pg.DB) []User {
+func GetUsers() []User {
 	var users []User
-	selectErr := db.Model(&users).Limit(10).Select()
+	selectErr := db.DBConn.Model(&users).Limit(10).Select()
 	if selectErr != nil {
 		log.Printf("Error selecting users: %v", selectErr)
 	}

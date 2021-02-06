@@ -1,0 +1,7 @@
+ALTER TABLE users 
+DROP COLUMN created_at CASCADE,
+DROP COLUMN updated_at CASCADE;
+
+ALTER TABLE todos 
+DROP COLUMN created_at CASCADE,
+DROP COLUMN updated_at CASCADE;

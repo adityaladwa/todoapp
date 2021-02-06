@@ -1,1 +1,2 @@
-DROP database IF EXISTS todoapp;
+DROP table users;
+DROP table todos;

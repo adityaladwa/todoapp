@@ -1,9 +1,16 @@
+.PHONY: postgres migrate
+
 createdb:
-	createdb --username=adityaladwa --owner=adityaladwa todoapp
+	createdb --username=postgres --owner=postgres todoapp
 
 dropdb:
 	dropdb todoapp
 
-dbup:
-	migrate -path db/migration -database "postgresql://localhost:5432/todoapp?sslmode=disable" -verbose up
+migrate:
+	migrate -source file://db/migration -database "postgres://localhost:5432/todoapp?sslmode=disable" -verbose up
+
+postgres:
+	docker run --rm -ti --network host -e POSTGRES_PASSWORD=verysecret  postgres
+
+
 

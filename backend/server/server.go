@@ -1,54 +1,29 @@
 package server
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/adityaladwa/todoapp/db/users"
-	"github.com/go-pg/pg/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
-func UsersEndpoint(db *pg.DB, w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		getUsers(db, w, r)
-	case http.MethodPost:
-		addUser(db, w, r)
-	default:
-		log.Printf("Only get and post is available")
-	}
+func GetUsers(c *fiber.Ctx) error {
+	userResult := users.GetUsers()
+	c.JSON(userResult)
+	return nil
 }
 
-func getUsers(db *pg.DB, w http.ResponseWriter, r *http.Request) {
-	log.Print("Got a request")
-	userResult := users.GetUsers(db)
-	usersJson, err := json.Marshal(userResult)
-	if err != nil {
-		log.Printf(err.Error())
+func AddUser(c *fiber.Ctx) error {
+	user := new(users.User)
+	if err := c.BodyParser(user); err != nil {
+		c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
+		return err
 	}
-	w.Write(usersJson)
-}
-
-func addUser(db *pg.DB, w http.ResponseWriter, r *http.Request) {
-	log.Print("Got a request to add a user")
-	user := users.User{}
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&user); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+	if err := user.InsertUser(); err != nil {
+		c.Status(http.StatusInternalServerError).Send([]byte(err.Error()))
+		return err
 	}
-	defer r.Body.Close()
-	if err := user.InsertUser(db); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-	}
-	response, err := json.Marshal(user)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(response))
+	user.Password = ""
+	c.Status(http.StatusCreated).JSON(user)
+	return nil
 }

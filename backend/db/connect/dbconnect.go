@@ -5,9 +5,11 @@ import (
 	"github.com/go-pg/pg/v10"
 )
 
-func Connect() *pg.DB {
+var DBConn *pg.DB
+
+func Connect() {
 	DbCofig := db.GetDbConfig()
-	return pg.Connect(&pg.Options{
+	DBConn = pg.Connect(&pg.Options{
 		User:     DbCofig.Username,
 		Database: DbCofig.DbName,
 	})

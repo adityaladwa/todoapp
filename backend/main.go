@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/adityaladwa/todoapp/app"
+	db "github.com/adityaladwa/todoapp/db/connect"
+	"github.com/adityaladwa/todoapp/server"
 )
 
 func main() {
-	app.Init()
+	db.Connect()
+	server.SetupServer()
 }

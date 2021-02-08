@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/adityaladwa/todoapp/db/users"
+	"github.com/adityaladwa/todoapp/users"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )

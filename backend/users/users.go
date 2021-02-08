@@ -14,6 +14,10 @@ type User struct {
 	Password string `sql:"password" json:"password"`
 }
 
+type UserLoginResponse struct {
+	Token string `json:"token"`
+}
+
 func NewUser(username string, email string, password string) *User {
 	hash := GetPasswordHash(password)
 	return &User{Username: username, Email: email, Password: string(hash)}
@@ -25,6 +29,17 @@ func (u *User) InsertUser() error {
 	if insertErr != nil {
 		log.Printf("Error inserting user: %v", insertErr)
 		return insertErr
+	}
+	return nil
+}
+
+func (u *User) FindOne() error {
+	err := db.DBConn.Model(u).
+		Where("email = ?", u.Email).
+		Select()
+	if err != nil {
+		log.Printf("Error Finding user: %v", err)
+		return err
 	}
 	return nil
 }
@@ -50,6 +65,7 @@ func IsPasswordValid(passwordHash string, password string) bool {
 	decryptErr := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password))
 	if decryptErr != nil {
 		log.Printf("Error decrypting password: %v", decryptErr)
+		return false
 	}
 	log.Printf("Password was decrypted successfully")
 	return true

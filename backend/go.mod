@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/andybalholm/brotli v1.0.1 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-pg/pg/v10 v10.7.5
 	github.com/go-redis/redis/v8 v8.5.0
 	github.com/gofiber/fiber/v2 v2.4.1

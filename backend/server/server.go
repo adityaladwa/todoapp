@@ -11,15 +11,24 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	jwtware "github.com/gofiber/jwt/v2"
 )
 
+var jwtSigningKey = "supersecret"
+
 func SetupServer() {
-	s := fiber.New()
-	s.Use(logger.New())
-	s.Get("api/v1/users", getUsers)
-	s.Post("api/v1/users/signup", signUp)
-	s.Post("api/v1/users/login", login)
-	s.Listen(":8080")
+	app := fiber.New()
+	app.Use(logger.New())
+	app.Get("api/v1/users", authMiddleware(), getUsers)
+	app.Post("api/v1/users/signup", signUp)
+	app.Post("api/v1/users/login", login)
+	app.Listen(":8080")
+}
+
+func authMiddleware() func(c *fiber.Ctx) error {
+	return jwtware.New(jwtware.Config{
+		SigningKey: []byte(jwtSigningKey),
+	})
 }
 
 func getUsers(c *fiber.Ctx) error {
@@ -86,7 +95,7 @@ func generateJWTToken(email string) (string, error) {
 	claims["authorized"] = true
 	claims["expire"] = time.Now().Add(time.Minute * 30).Unix()
 
-	tokenString, err := token.SignedString([]byte("supersecret"))
+	tokenString, err := token.SignedString([]byte(jwtSigningKey))
 	if err != nil {
 		log.Printf("Something went wrong: %v", err)
 	}

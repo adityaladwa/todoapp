@@ -17,11 +17,18 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding:EdgeInsets.all(20.0),
+            padding: EdgeInsets.all(20.0),
             child: TextFormField(
               cursorColor: Theme.of(context).cursorColor,
               decoration: InputDecoration(
                   labelText: "Password", border: OutlineInputBorder()),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(20.0),
+            child: ElevatedButton(
+              onPressed: () {},
+              child: Text("Login"),
             ),
           ),
         ],

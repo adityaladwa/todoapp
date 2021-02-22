@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/network.dart';
 
 class LoginPage extends StatelessWidget {
+  final network = new Network();
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,6 +18,7 @@ class LoginPage extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: TextFormField(
               cursorColor: Theme.of(context).cursorColor,
+              controller: emailController,
               decoration: InputDecoration(
                   labelText: "Email", border: OutlineInputBorder()),
             ),
@@ -20,6 +27,7 @@ class LoginPage extends StatelessWidget {
             padding: EdgeInsets.all(20.0),
             child: TextFormField(
               cursorColor: Theme.of(context).cursorColor,
+              controller: passwordController,
               decoration: InputDecoration(
                   labelText: "Password", border: OutlineInputBorder()),
             ),
@@ -27,7 +35,15 @@ class LoginPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(20.0),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                network
+                    .login(emailController.text, passwordController.text)
+                    .catchError((e) {
+                  debugPrint("Error loging user");
+                }).then((res) {
+                  debugPrint(res.token);
+                });
+              },
               child: Text("Login"),
             ),
           ),
